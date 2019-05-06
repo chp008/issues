@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+	<context:property-placeholder location="classpath:db.properties"/>
+	<bean id="JndiTemplate" class="org.springframework.jndi.JndiTemplate">
+	   <property name="environment">
+	     <props>
+	       <prop key="java.naming.factory.initial">${factory.initial}</prop>
+	      </props>
+	   </property>
+	</bean>
+	<bean id="ConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+	  <property name="jndiTemplate" ref="JndiTemplate" />
+	  <property name="jndiName" value="${connection.factory}" />
+	</bean>
+	<bean id="CachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		  <constructor-arg ref="ConnectionFactory"/>
+		  <property name="reconnectOnException" value="true" />
+		  <property name="sessionCacheSize" value="1" />
+	</bean>
+</beans>
